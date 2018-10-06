@@ -1,10 +1,5 @@
 import React from "react";
-
-export interface IPost {
-    id: string;
-    date: Date;
-    content: string;
-}
+import { IPost } from "./models/post";
 
 interface IPostProps {
     previous?: Date;

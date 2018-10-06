@@ -1,8 +1,8 @@
-import firebase from "firebase/app";
 import React from "react";
+import { PostService } from "./services/post-service";
 
 interface IFormState {
-    userId: string;
+    postService: PostService;
 }
 
 interface IPostState {
@@ -34,7 +34,7 @@ export class PostForm extends React.Component<IFormState, IPostState> {
                         onChange={ev => this.updatePost(ev.target.value)} />
                 </div>
 
-                <div className="row justify-content-sm-center justify-content-md-right">
+                <div className="row justify-content-right">
                     <div className="col-sm-12 col-md-4">
                         <input type="submit"
                             value="Post"
@@ -69,8 +69,8 @@ export class PostForm extends React.Component<IFormState, IPostState> {
         this.setState({ posting: true, date: new Date(), error: undefined });
 
         try {
-            await firebase.database().ref(`${this.props.userId}/posts`).push({
-                date: this.state.date.toISOString(),
+            await this.props.postService.createOrUpdatePost({
+                date: this.state.date,
                 content: this.state.content,
             });
 

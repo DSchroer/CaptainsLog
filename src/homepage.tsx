@@ -5,31 +5,43 @@ import { LoginForm } from "./login-form";
 import { PostForm } from "./post-form";
 import { PostList } from "./post-list";
 import { loading } from "./utils/loading-bar";
+import { PostService } from "./services/post-service";
 
 interface IHomestate {
     loading: boolean;
-    auth: firebase.User | null;
+    auth?: {
+        user: firebase.User;
+        posts: PostService;
+    };
 }
 
 export class Homepage extends React.Component<{}, IHomestate> {
     constructor(props: Readonly<{}>) {
         super(props);
 
-        this.state = { loading: true, auth: null };
+        this.state = { loading: true };
 
         firebase.auth().onAuthStateChanged(auth => {
-            this.setState({
-                loading: false,
-                auth: auth,
-            });
+            if (!auth) {
+                this.setState({ loading: false, auth: undefined });
+            } else {
+                this.setState({
+                    loading: false,
+                    auth: {
+                        user: auth,
+                        posts: new PostService(auth.uid)
+                    },
+                });
+            }
         });
     }
 
     public render() {
         return (
             <div>
-                <nav className="navbar navbar-light bg-light">
+                <nav className="navbar navbar-light bg-light mb-3">
                     <a className="navbar-brand" href="/">
+                        <img className="mx-2" src="images/icon.png" width="25" height="25"></img>
                         Captains Log
                     </a>
                     {this.signOutButton()}
@@ -67,9 +79,9 @@ export class Homepage extends React.Component<{}, IHomestate> {
 
         return (
             <div>
-                <PostForm userId={this.state.auth.uid}></PostForm>
+                <PostForm postService={this.state.auth.posts}></PostForm>
                 <hr></hr>
-                <PostList userId={this.state.auth.uid}></PostList>
+                <PostList postService={this.state.auth.posts}></PostList>
             </div>
         );
     }

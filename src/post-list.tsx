@@ -1,9 +1,10 @@
-import firebase from "firebase/app";
 import React, { CSSProperties } from "react";
-import { IPost, Post } from "./post-display";
+import { Post } from "./post";
+import { IPost } from "./models/post";
+import { PostService } from "./services/post-service";
 
 interface IFormState {
-    userId: string;
+    postService: PostService;
 }
 
 interface IListState {
@@ -15,35 +16,9 @@ export class PostList extends React.Component<IFormState, IListState> {
         super(props);
         this.state = { posts: [] };
 
-        firebase.database().ref(`${props.userId}/posts`).on("value", (snapshot => {
-            if (!snapshot) {
-                return;
-            }
-
-            const response = snapshot.val();
-            if (!response) {
-                this.setState({
-                    posts: [],
-                });
-                return;
-            }
-
-            let posts = Object.keys(response).map<IPost>(id => {
-                return {
-                    id: id,
-                    content: response[id].content,
-                    date: new Date(response[id].date),
-                };
-            });
-
-            posts = posts.sort((a, b) => {
-                return b.date.valueOf() - a.date.valueOf();
-            });
-
-            this.setState({
-                posts: posts,
-            });
-        }));
+        props.postService.posts.subscribe(posts => {
+            this.setState({ posts: posts });
+        });
     }
 
     public render() {

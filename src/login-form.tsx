@@ -40,7 +40,14 @@ export class LoginForm extends React.Component<{}, ILoginState> {
                         onChange={ev => this.setPassword(ev.target.value)} />
                 </div>
 
-                <input type="submit" value="Login" />
+                <div className="clearfix">
+                    <input className="btn btn-primary float-left" type="submit" value="Login" />
+                    <input className="btn btn-secondary float-right" type="button" value="Register" onClick={ev => {
+                        ev.preventDefault();
+                        this.register();
+                    }} />
+                </div>
+
                 <hr></hr>
                 {this.errorMessage()}
             </form>
@@ -65,6 +72,18 @@ export class LoginForm extends React.Component<{}, ILoginState> {
 
     private setEmail(email: string) {
         this.setState({ email: email });
+    }
+
+    private async register() {
+        const email = this.state.email;
+        const password = this.state.password;
+
+        try {
+            this.setState({ error: undefined });
+            await firebase.auth().createUserWithEmailAndPassword(email, password);
+        } catch (e) {
+            this.setState({ error: e.message });
+        }
     }
 
     private async login() {
