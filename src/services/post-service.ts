@@ -18,12 +18,12 @@ export class PostService {
 
     public createOrUpdatePost(post: IPost) {
         const toPost = {
-            id: post.id,
             date: post.date.toISOString(),
             content: post.content
         }
 
-        if (toPost.id) {
+        if (post.id) {
+            (toPost as any).id = post.id;
             return this._ref.set(toPost);
         } else {
             return this._ref.push(toPost);
