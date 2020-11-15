@@ -4,24 +4,28 @@ import { IPost } from "../models/post";
 import {IPostStore} from "./post-store";
 
 export class PostService implements IPostStore {
-    public posts: Observable<IPost>;
+    public posts: Observable<IPost[]>;
 
-    private postsSubject = new ReplaySubject<IPost>();
+    private postsSubject = new ReplaySubject<IPost[]>();
 
     private reference: firebase.database.Reference;
 
     constructor(userId: string) {
         this.posts = this.postsSubject;
         this.reference = firebase.database().ref(`${userId}/posts`);
-        this.reference.on("child_added", (data) => {
-            const id = data.key || undefined;
-            const post = data.val() as IPost;
+        this.reference.on("value", (snapshot) => {
+            const posts: IPost[] = [];
+            snapshot.forEach(data => {
+                const id = data.key || undefined;
+                const post = data.val() as IPost;
 
-            this.postsSubject.next({
-                id: id,
-                content: post.content,
-                date: new Date(post.date),
+                posts.unshift({
+                    id: id,
+                    content: post.content,
+                    date: new Date(post.date),
+                });
             });
+            this.postsSubject.next(posts);
         });
     }
 

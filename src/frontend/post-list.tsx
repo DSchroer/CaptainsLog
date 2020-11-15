@@ -18,9 +18,8 @@ export class PostList extends React.Component<IFormState, IListState> {
         super(props);
         this.state = { posts: [], loading: true };
 
-        props.postService.posts.subscribe(post => {
-            this.state.posts.unshift(post);
-            this.setState({ posts: this.state.posts, loading: false });
+        props.postService.posts.subscribe(posts => {
+            this.setState({ posts, loading: false });
         });
     }
 
