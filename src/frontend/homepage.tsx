@@ -9,6 +9,7 @@ import {PostList} from "./post-list";
 import {RegisterForm} from "./register-form";
 import {UserService} from "./services/user-service";
 import {ForgotForm} from "./forgot-form";
+import {InstallPrompt} from "./install-prompt";
 
 type Pages = "login" | "register" | "forgot" | "posts";
 
@@ -50,7 +51,10 @@ export class Homepage extends React.Component<{}, IHomestate> {
                         <img className="mx-2" src="images/icon.png" width="25" height="25"></img>
                         Captains Log
                     </a>
-                    {this.signOutButton()}
+                    <span>
+                        <InstallPrompt></InstallPrompt>
+                        {this.signOutButton()}
+                    </span>
                 </nav>
                 <div className="container">
                     {this.page()}
