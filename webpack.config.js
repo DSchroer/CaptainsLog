@@ -4,7 +4,10 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 const TerserPlugin = require("terser-webpack-plugin");
 
 module.exports = {
-    entry: './src/index.tsx',
+    entry: {
+        frontend: './src/frontend/index.tsx',
+        worker: './src/worker/index.ts'
+    },
     module: {
         rules: [
             {
@@ -18,7 +21,7 @@ module.exports = {
         extensions: ['.tsx', '.ts', '.js']
     },
     output: {
-        filename: 'bundle.js',
+        filename: '[name]-bundle.js',
         path: path.resolve(__dirname, 'dist'),
     },
     plugins: [

@@ -5,7 +5,7 @@
     "resolveJsonModule": true,
     "lib": [
       "es2015",
-      "dom"
+      "dom",
     ],
     "jsx": "react",
     "strict": true,

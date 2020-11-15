@@ -1,0 +1,17 @@
+{
+  "name":"Captains Log",
+  "short_name":"Captains Log",
+  "start_url":"./index.html",
+  "display":"standalone",
+  "background_color":"#5900b3",
+  "theme_color":"black",
+  "scope": ".",
+  "description":"Minimal personal journal",
+  "icons":[
+    {
+      "src":"images/icon.png",
+      "sizes":"512x512",
+      "type":"image/png"
+    }
+  ]
+}
