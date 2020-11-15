@@ -26,6 +26,10 @@ export class UserService {
         await firebase.auth().signOut();
     }
 
+    public async resetPassword(email: string) {
+        await firebase.auth().sendPasswordResetEmail(email);
+    }
+
     public async register(email: string, password: string, confirm: string) {
         if (confirm !== password) {
             throw new Error("Passwords and confirmation does not match.");

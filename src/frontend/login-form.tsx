@@ -9,6 +9,7 @@ interface ILoginState {
 
 interface ILoginProps {
     onRegister: () => void;
+    onForgot: () => void;
     userService: UserService;
 }
 
@@ -50,6 +51,11 @@ export class LoginForm extends React.Component<ILoginProps, ILoginState> {
 
                     <div className="clearfix">
                         <input className="btn btn-primary float-left" type="submit" value="Login"/>
+                        <input className="btn btn-default float-left forgot" type="button" value="Forgot Password" onClick={ev => {
+                            ev.preventDefault();
+                            this.props.onForgot();
+                        }}/>
+
                         <input className="btn btn-secondary float-right" type="button" value="Register" onClick={ev => {
                             ev.preventDefault();
                             this.props.onRegister();

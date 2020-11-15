@@ -8,15 +8,14 @@ import {PostForm} from "./post-form";
 import {PostList} from "./post-list";
 import {RegisterForm} from "./register-form";
 import {UserService} from "./services/user-service";
+import {ForgotForm} from "./forgot-form";
 
-type Pages = "login" | "register" | "posts";
+type Pages = "login" | "register" | "forgot" | "posts";
 
 interface IHomestate {
     loading: boolean;
     page: Pages;
-    auth?: {
-        posts: IPostStore;
-    };
+    posts?: IPostStore;
 }
 
 export class Homepage extends React.Component<{}, IHomestate> {
@@ -27,16 +26,16 @@ export class Homepage extends React.Component<{}, IHomestate> {
         super(props);
 
         this.state = { loading: true, page: "login" };
+    }
 
+    public componentDidMount() {
         this.userService.userId.subscribe(id => {
             if (!id) {
-                this.setState({ loading: false, auth: undefined });
+                this.setState({ loading: false, posts: undefined });
             } else {
                 this.setState({
                     loading: false,
-                    auth: {
-                        posts: new PostService(id),
-                    },
+                    posts: new PostService(id),
                     page: "posts",
                 });
             }
@@ -61,7 +60,7 @@ export class Homepage extends React.Component<{}, IHomestate> {
     }
 
     private signOutButton() {
-        if (!this.state.auth) {
+        if (!this.state.posts) {
             return;
         }
 
@@ -86,14 +85,17 @@ export class Homepage extends React.Component<{}, IHomestate> {
 
         switch (this.state.page) {
             case "login":
-                return (<LoginForm onRegister={() => this.setPage("register")} userService={this.userService}></LoginForm>);
+                return (<LoginForm onRegister={() => this.setPage("register")} onForgot={() => this.setPage("forgot")} userService={this.userService}>
+                </LoginForm>);
             case "register":
                 return (<RegisterForm userService={this.userService}></RegisterForm>);
+            case "forgot":
+                return (<ForgotForm userService={this.userService} onSend={() => this.setPage("login")}></ForgotForm>);
             case "posts":
                 return (<div>
-                    <PostForm postService={this.state.auth!.posts}></PostForm>
+                    <PostForm postService={this.state.posts!}></PostForm>
                     <hr></hr>
-                    <PostList postService={this.state.auth!.posts}></PostList>
+                    <PostList postService={this.state.posts!}></PostList>
                 </div>);
             default:
                 throw new Error("Unsupported page");

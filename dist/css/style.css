@@ -1,3 +1,11 @@
 nav {
     border-bottom: 1px solid black;
 }
+
+.forgot {
+    margin-left: 1em;
+}
+
+.alert {
+    margin-top: 1em;
+}
