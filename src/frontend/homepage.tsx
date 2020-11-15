@@ -1,36 +1,43 @@
-import firebase from "firebase/app";
 import React from "react";
 
 import { LoginForm } from "./login-form";
-import { PostForm } from "./post-form";
-import { PostList } from "./post-list";
 import { loading } from "./utils/loading-bar";
 import { PostService } from "./services/post-service";
+import {IPostStore} from "./services/post-store";
+import {PostForm} from "./post-form";
+import {PostList} from "./post-list";
+import {RegisterForm} from "./register-form";
+import {UserService} from "./services/user-service";
+
+type Pages = "login" | "register" | "posts";
 
 interface IHomestate {
     loading: boolean;
+    page: Pages;
     auth?: {
-        user: firebase.User;
-        posts: PostService;
+        posts: IPostStore;
     };
 }
 
 export class Homepage extends React.Component<{}, IHomestate> {
+
+    private userService = new UserService();
+
     constructor(props: Readonly<{}>) {
         super(props);
 
-        this.state = { loading: true };
+        this.state = { loading: true, page: "login" };
 
-        firebase.auth().onAuthStateChanged(auth => {
-            if (!auth) {
+        this.userService.userId.subscribe(id => {
+            if (!id) {
                 this.setState({ loading: false, auth: undefined });
             } else {
                 this.setState({
                     loading: false,
                     auth: {
-                        user: auth,
-                        posts: new PostService(auth.uid),
+                        posts: new PostService(id),
                     },
+                    page: "posts",
                 });
             }
         });
@@ -68,25 +75,33 @@ export class Homepage extends React.Component<{}, IHomestate> {
         );
     }
 
+    private setPage(page: Pages) {
+        this.setState({page});
+    }
+
     private page() {
         if (this.state.loading) {
             return loading();
         }
 
-        if (!this.state.auth) {
-            return (<LoginForm></LoginForm>);
+        switch (this.state.page) {
+            case "login":
+                return (<LoginForm onRegister={() => this.setPage("register")} userService={this.userService}></LoginForm>);
+            case "register":
+                return (<RegisterForm userService={this.userService}></RegisterForm>);
+            case "posts":
+                return (<div>
+                    <PostForm postService={this.state.auth!.posts}></PostForm>
+                    <hr></hr>
+                    <PostList postService={this.state.auth!.posts}></PostList>
+                </div>);
+            default:
+                throw new Error("Unsupported page");
         }
-
-        return (
-            <div>
-                <PostForm postService={this.state.auth.posts}></PostForm>
-                <hr></hr>
-                <PostList postService={this.state.auth.posts}></PostList>
-            </div>
-        );
     }
 
-    private signout() {
-        firebase.auth().signOut();
+    private async signout() {
+        await this.userService.logout();
+        this.setPage("login");
     }
 }

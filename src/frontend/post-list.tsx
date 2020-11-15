@@ -1,4 +1,4 @@
-import React, { CSSProperties } from "react";
+import React from "react";
 import { Post } from "./post";
 import { IPost } from "./models/post";
 import { loading } from "./utils/loading-bar";
