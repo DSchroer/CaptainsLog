@@ -16,6 +16,8 @@ self.addEventListener("install", (event: any) => {
                 "/js/jquery-3.3.1.slim.min.js",
                 "/js/popper.min.js",
                 "/images/icon.png",
+                "/images/icon192x192.png",
+                "/images/icon512x512.png",
                 "/images/maskable_icon.png",
                 "/manifest.json",
             ]);

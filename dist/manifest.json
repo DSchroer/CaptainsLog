@@ -9,7 +9,12 @@
   "description":"Minimal personal journal",
   "icons":[
     {
-      "src":"images/icon.png",
+      "src":"images/icon192x192.png",
+      "sizes":"192x192",
+      "type":"image/png"
+    },
+    {
+      "src":"images/icon512x512.png",
       "sizes":"512x512",
       "type":"image/png"
     },
