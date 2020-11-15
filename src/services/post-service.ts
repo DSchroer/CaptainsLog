@@ -3,13 +3,14 @@ import firebase from "firebase/app";
 import { IPost } from "../models/post";
 
 export class PostService {
-    public posts: Observable<IPost[]> = this.postsSubject;
+    public posts: Observable<IPost[]>;
 
     private postsSubject = new BehaviorSubject<IPost[]>([]);
 
     private reference: firebase.database.Reference;
 
     constructor(userId: string) {
+        this.posts = this.postsSubject;
         this.reference = firebase.database().ref(`${userId}/posts`);
         this.reference.on("value", (snapshot => {
             this.loadPostsFromSnapshot(snapshot);
