@@ -6,7 +6,8 @@
   "scripts": {
     "start": "webpack serve --config ./webpack.config.js --mode development",
     "package": "webpack --mode production",
-    "profile": "webpack --mode production --profile --json > stats.json"
+    "profile": "webpack --mode production --profile --json > stats.json",
+    "deploy": "npm run package && firebase deploy --project captains-log-64889"
   },
   "keywords": [],
   "author": "",
