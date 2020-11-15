@@ -1,7 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 
 module.exports = {
     entry: './src/index.tsx',
@@ -23,12 +23,7 @@ module.exports = {
     },
     plugins: [
         new webpack.HotModuleReplacementPlugin(),
-        new UglifyJsPlugin({
-            sourceMap: true,
-            uglifyOptions: {
-                dead_code: true
-            }
-        })
+        new TerserPlugin()
     ],
     devServer: {
         publicPath: "/",
