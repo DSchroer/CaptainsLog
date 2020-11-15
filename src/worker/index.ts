@@ -6,6 +6,7 @@ self.addEventListener("install", (event: any) => {
         caches.open(staticCacheName).then((cache) =>  {
             return cache.addAll([
                 "/",
+                "/index.html",
                 "/css/bootstrap.min.css",
                 "/css/fontawesome.css",
                 "/css/style.css",
@@ -15,6 +16,7 @@ self.addEventListener("install", (event: any) => {
                 "/js/jquery-3.3.1.slim.min.js",
                 "/js/popper.min.js",
                 "/images/icon.png",
+                "/images/maskable_icon.png",
                 "/manifest.json",
             ]);
         }),
