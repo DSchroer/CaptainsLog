@@ -9,7 +9,7 @@
         "no-console": false,
         "arrow-parens": false,
         "object-literal-shorthand": false,
-        "ordered-imports": false,
+        "ordered-imports": false
     },
     "rulesDirectory": []
 }

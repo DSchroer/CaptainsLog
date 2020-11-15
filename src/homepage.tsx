@@ -29,7 +29,7 @@ export class Homepage extends React.Component<{}, IHomestate> {
                     loading: false,
                     auth: {
                         user: auth,
-                        posts: new PostService(auth.uid)
+                        posts: new PostService(auth.uid),
                     },
                 });
             }

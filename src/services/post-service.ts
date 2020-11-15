@@ -1,17 +1,17 @@
 import { Observable, BehaviorSubject } from "rxjs";
-import firxebase from "firebase/app";
+import firebase from "firebase/app";
 import { IPost } from "../models/post";
 
 export class PostService {
+    public posts: Observable<IPost[]> = this.postsSubject;
 
-    private _posts = new BehaviorSubject<IPost[]>([]);
-    posts: Observable<IPost[]> = this._posts;
+    private postsSubject = new BehaviorSubject<IPost[]>([]);
 
-    private _ref: firebase.database.Reference;
+    private reference: firebase.database.Reference;
 
     constructor(userId: string) {
-        this._ref = firxebase.database().ref(`${userId}/posts`);
-        this._ref.on("value", (snapshot => {
+        this.reference = firebase.database().ref(`${userId}/posts`);
+        this.reference.on("value", (snapshot => {
             this.loadPostsFromSnapshot(snapshot);
         }));
     }
@@ -19,14 +19,14 @@ export class PostService {
     public createOrUpdatePost(post: IPost) {
         const toPost = {
             date: post.date.toISOString(),
-            content: post.content
-        }
+            content: post.content,
+        };
 
         if (post.id) {
             (toPost as any).id = post.id;
-            return this._ref.set(toPost);
+            return this.reference.set(toPost);
         } else {
-            return this._ref.push(toPost);
+            return this.reference.push(toPost);
         }
     }
 
@@ -37,7 +37,7 @@ export class PostService {
 
         const response = snapshot.val();
         if (!response) {
-            this._posts.next([]);
+            this.postsSubject.next([]);
             return;
         }
 
@@ -53,6 +53,6 @@ export class PostService {
             return b.date.valueOf() - a.date.valueOf();
         });
 
-        this._posts.next(posts);
+        this.postsSubject.next(posts);
     }
 }
