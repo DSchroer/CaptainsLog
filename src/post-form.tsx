@@ -1,8 +1,8 @@
 import React from "react";
-import { PostService } from "./services/post-service";
+import { IPostStore } from "./services/post-store";
 
 interface IFormState {
-    postService: PostService;
+    postService: IPostStore;
 }
 
 interface IPostState {
@@ -69,7 +69,7 @@ export class PostForm extends React.Component<IFormState, IPostState> {
         this.setState({ posting: true, date: new Date(), error: undefined });
 
         try {
-            await this.props.postService.createOrUpdatePost({
+            await this.props.postService.add({
                 date: this.state.date,
                 content: this.state.content,
             });

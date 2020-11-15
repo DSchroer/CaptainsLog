@@ -1,20 +1,33 @@
-import { Observable, BehaviorSubject } from "rxjs";
+import {Observable, ReplaySubject} from "rxjs";
 import firebase from "firebase/app";
 import { IPost } from "../models/post";
+import {IPostStore} from "./post-store";
 
-export class PostService {
-    public posts: Observable<IPost[]>;
+export class PostService implements IPostStore {
+    public posts: Observable<IPost>;
 
-    private postsSubject = new BehaviorSubject<IPost[]>([]);
+    private postsSubject = new ReplaySubject<IPost>();
 
     private reference: firebase.database.Reference;
 
     constructor(userId: string) {
         this.posts = this.postsSubject;
         this.reference = firebase.database().ref(`${userId}/posts`);
-        this.reference.on("value", (snapshot => {
-            this.loadPostsFromSnapshot(snapshot);
-        }));
+        this.reference.on("child_added", (data) => {
+            const id = data.key || undefined;
+            const post = data.val() as IPost;
+
+            this.postsSubject.next({
+                id: id,
+                content: post.content,
+                date: new Date(post.date),
+            });
+        });
+    }
+
+    public add(post: IPost): Promise<void> {
+        this.createOrUpdatePost(post);
+        return Promise.resolve();
     }
 
     public createOrUpdatePost(post: IPost) {
@@ -29,31 +42,5 @@ export class PostService {
         } else {
             return this.reference.push(toPost);
         }
-    }
-
-    private loadPostsFromSnapshot(snapshot: firebase.database.DataSnapshot | null) {
-        if (!snapshot) {
-            return;
-        }
-
-        const response = snapshot.val();
-        if (!response) {
-            this.postsSubject.next([]);
-            return;
-        }
-
-        let posts = Object.keys(response).map<IPost>(id => {
-            return {
-                id: id,
-                content: response[id].content,
-                date: new Date(response[id].date),
-            };
-        });
-
-        posts = posts.sort((a, b) => {
-            return b.date.valueOf() - a.date.valueOf();
-        });
-
-        this.postsSubject.next(posts);
     }
 }

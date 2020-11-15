@@ -1,11 +1,11 @@
 import React, { CSSProperties } from "react";
 import { Post } from "./post";
 import { IPost } from "./models/post";
-import { PostService } from "./services/post-service";
 import { loading } from "./utils/loading-bar";
+import { IPostStore } from "./services/post-store";
 
 interface IFormState {
-    postService: PostService;
+    postService: IPostStore;
 }
 
 interface IListState {
@@ -18,8 +18,9 @@ export class PostList extends React.Component<IFormState, IListState> {
         super(props);
         this.state = { posts: [], loading: true };
 
-        props.postService.posts.subscribe(posts => {
-            this.setState({ posts: posts, loading: false });
+        props.postService.posts.subscribe(post => {
+            this.state.posts.unshift(post);
+            this.setState({ posts: this.state.posts, loading: false });
         });
     }
 
