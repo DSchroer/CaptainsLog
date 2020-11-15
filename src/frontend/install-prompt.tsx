@@ -1,41 +1,34 @@
 import React from "react";
 
 export interface IInstallState {
-    visible: boolean;
+    prompt?: Event;
 }
 
 export class InstallPrompt extends React.Component<{}, IInstallState> {
 
-    private deferredPrompt?: Event;
-
     constructor(props: Readonly<{}>) {
         super(props);
 
-        this.state = { visible: false };
+        this.state = {  };
 
         window.addEventListener("beforeinstallprompt", e => {
             e.preventDefault();
-
-            this.setState({visible: true});
+            this.setState({prompt: e});
         });
     }
 
     public render() {
-        if (this.state.visible) {
+        if (this.state.prompt) {
             return <>
-            <a href="#" onClick={() => this.install()}><i className="fas fa-home icon"></i></a>
+                <a href="#" onClick={() => this.install(this.state.prompt!)}><i className="fas fa-home icon"></i></a>
             </>;
         } else {
             return (<></>);
         }
     }
 
-    private install() {
-        if (this.deferredPrompt) {
-            (this.deferredPrompt as any).prompt();
-            this.deferredPrompt = undefined;
-        }
-
-        this.setState({visible: false});
+    private install(prompt: Event) {
+        (prompt as any).prompt();
+        this.setState({prompt: undefined});
     }
 }
